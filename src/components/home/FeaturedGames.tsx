@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { motion } from "motion/react";
-import { ShoppingBag, Star, Tag, Check, Eye } from "lucide-react";
-import { Game } from "../../types";
+import { ShoppingBag, Star, Tag, Check, Eye, Heart, ArrowUpDown } from "lucide-react";
+import { Game, SortOption } from "../../types";
 import { useCartContext } from "../../context/CartContext";
+import { useWishlistContext } from "../../context/WishlistContext";
 
 interface FeaturedGamesProps {
   games: Game[];
@@ -17,7 +19,10 @@ export default function FeaturedGames({
   onSelectCategory,
 }: FeaturedGamesProps) {
   const { cartItems, addToCart, openGameModal } = useCartContext();
+  const { toggleWishlist, isInWishlist } = useWishlistContext();
+  const [sortOption, setSortOption] = useState<SortOption>("featured");
 
+  // Filter games based on selected category
   const filteredGames = games.filter((game) => {
     if (selectedCategory === "All") return true;
     return (
@@ -26,11 +31,31 @@ export default function FeaturedGames({
     );
   });
 
+  // Sort games based on sortOption dropdown
+  const sortedGames = [...filteredGames].sort((a, b) => {
+    switch (sortOption) {
+      case "price-asc":
+        return a.price - b.price;
+      case "price-desc":
+        return b.price - a.price;
+      case "rating-desc":
+        return b.rating - a.rating;
+      case "release-desc":
+        return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+      case "discount-desc":
+        const getDisc = (g: Game) => (g.discount ? parseInt(g.discount.replace(/[^0-9]/g, ""), 10) : 0);
+        return getDisc(b) - getDisc(a);
+      case "featured":
+      default:
+        return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+    }
+  });
+
   return (
     <section id="featured" className="py-24 px-6 lg:px-16 bg-[#0a0a0f] relative z-10">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        {/* Section Header & Controls */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 border-b border-[#1e1e2e] pb-8">
           <div>
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.3em] text-[#00f3ff] mb-3">
               <Tag className="w-4 h-4" />
@@ -41,33 +66,54 @@ export default function FeaturedGames({
             </h2>
           </div>
 
-          {/* Category Filter Chips */}
-          <div id="categories" className="flex flex-wrap items-center gap-2">
-            {CATEGORIES.map((category) => (
-              <button
-                key={category}
-                onClick={() => onSelectCategory(category)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                  selectedCategory === category
-                    ? "bg-[#a855f7] text-white shadow-neon-purple"
-                    : "bg-[#12121c] text-zinc-400 border border-[#1e1e2e] hover:border-[#a855f7]/50 hover:text-white"
-                }`}
+          {/* Category Chips & Sort Controls */}
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Sort Options Dropdown */}
+            <div className="flex items-center gap-2 bg-[#12121c] border border-[#1e1e2e] rounded-xl px-3 py-2 text-xs text-zinc-300">
+              <ArrowUpDown className="w-4 h-4 text-[#00f3ff]" />
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value as SortOption)}
+                className="bg-transparent text-xs text-white font-bold focus:outline-none cursor-pointer"
               >
-                {category}
-              </button>
-            ))}
+                <option value="featured" className="bg-[#0a0a0f]">Featured</option>
+                <option value="price-asc" className="bg-[#0a0a0f]">Price: Low to High</option>
+                <option value="price-desc" className="bg-[#0a0a0f]">Price: High to Low</option>
+                <option value="rating-desc" className="bg-[#0a0a0f]">Highest Rated</option>
+                <option value="release-desc" className="bg-[#0a0a0f]">Newest Release</option>
+                <option value="discount-desc" className="bg-[#0a0a0f]">Highest Discount</option>
+              </select>
+            </div>
+
+            {/* Category Filter Chips */}
+            <div id="categories" className="flex flex-wrap items-center gap-2">
+              {CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => onSelectCategory(category)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                    selectedCategory === category
+                      ? "bg-[#a855f7] text-white shadow-neon-purple"
+                      : "bg-[#12121c] text-zinc-400 border border-[#1e1e2e] hover:border-[#a855f7]/50 hover:text-white"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Responsive 3-Column Grid */}
-        {filteredGames.length === 0 ? (
+        {sortedGames.length === 0 ? (
           <div className="text-center py-20 bg-[#12121c] border border-[#1e1e2e] rounded-3xl">
             <p className="text-zinc-400 text-base">No indie titles found matching your search.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredGames.map((game, index) => {
+            {sortedGames.map((game, index) => {
               const isInCart = cartItems.some((item) => item.game.id === game.id);
+              const isBookmarked = isInWishlist(game.id);
 
               return (
                 <motion.div
@@ -75,7 +121,7 @@ export default function FeaturedGames({
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.06 }}
+                  transition={{ delay: index * 0.05 }}
                   className="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between cursor-pointer"
                 >
                   {/* Card Header & Artwork */}
@@ -103,6 +149,22 @@ export default function FeaturedGames({
                         {game.discount}
                       </span>
                     )}
+
+                    {/* Wishlist Heart Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(game);
+                      }}
+                      className={`absolute bottom-4 right-4 p-2.5 rounded-full border backdrop-blur-md transition-all z-20 ${
+                        isBookmarked
+                          ? "bg-[#ff007f]/20 border-[#ff007f] text-[#ff007f] shadow-hot-pink"
+                          : "bg-black/60 border-white/10 text-zinc-400 hover:text-white"
+                      }`}
+                      title={isBookmarked ? "Remove from Wishlist" : "Save to Wishlist"}
+                    >
+                      <Heart className={`w-4 h-4 ${isBookmarked ? "fill-[#ff007f]" : ""}`} />
+                    </button>
 
                     {/* Rating Badge */}
                     <div className="absolute top-4 right-4 bg-[#0a0a0f]/80 backdrop-blur-md text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1 border border-white/10 z-10">

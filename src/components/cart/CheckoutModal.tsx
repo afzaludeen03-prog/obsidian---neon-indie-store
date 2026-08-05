@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, CheckCircle, Tag, CreditCard, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
+import { X, CheckCircle, CreditCard, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
 import { useCartContext } from "../../context/CartContext";
+import { useLibraryContext } from "../../context/LibraryContext";
 
 export default function CheckoutModal() {
   const {
@@ -14,6 +15,8 @@ export default function CheckoutModal() {
     promoError,
     promoCode,
   } = useCartContext();
+
+  const { addGamesToLibrary } = useLibraryContext();
 
   const [inputCode, setInputCode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"card" | "crypto" | "vault">("card");
@@ -40,6 +43,11 @@ export default function CheckoutModal() {
   const handleCompleteOrder = () => {
     const generatedId = `OBS-${Math.floor(100000 + Math.random() * 900000)}`;
     setOrderId(generatedId);
+
+    // Automatically add purchased games to user's permanent Library
+    const purchasedGames = cartItems.map((item) => item.game);
+    addGamesToLibrary(purchasedGames);
+
     setIsCompleted(true);
   };
 
@@ -102,7 +110,7 @@ export default function CheckoutModal() {
 
               <div className="p-4 rounded-2xl bg-[#12121c] border border-[#1e1e2e] text-left space-y-2 max-w-md mx-auto text-xs text-zinc-300">
                 <div className="flex justify-between border-b border-white/5 pb-2">
-                  <span>Items Purchased:</span>
+                  <span>Items Added to Library:</span>
                   <span className="font-bold text-white">{cartItems.length} games</span>
                 </div>
                 <div className="flex justify-between pt-1 font-bold text-white">
@@ -115,7 +123,7 @@ export default function CheckoutModal() {
                 onClick={handleFinish}
                 className="w-full max-w-md py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all shadow-neon-purple mx-auto"
               >
-                Launch Game Vault
+                Go to My Library
               </button>
             </div>
           ) : (

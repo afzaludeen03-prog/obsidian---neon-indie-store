@@ -40,3 +40,27 @@ export interface CartItem {
   game: Game;
   quantity: number;
 }
+
+export interface CommunityPost {
+  id: string;
+  author: string;
+  avatar: string;
+  date: string;
+  title: string;
+  content: string;
+  gameTitle?: string;
+  likes: number;
+  comments: number;
+  isDeveloper?: boolean;
+  tags?: string[];
+}
+
+export type SortOption =
+  | "featured"
+  | "price-asc"
+  | "price-desc"
+  | "rating-desc"
+  | "release-desc"
+  | "discount-desc";
+
+export type ActiveTab = "store" | "library" | "community";
