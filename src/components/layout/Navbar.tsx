@@ -1,20 +1,17 @@
 import { ShoppingBag, Search, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useCartContext } from "../../context/CartContext";
 
 interface NavbarProps {
-  cartCount: number;
-  onOpenCart: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
 
-export default function Navbar({
-  cartCount,
-  onOpenCart,
-  searchQuery,
-  onSearchChange,
-}: NavbarProps) {
+export default function Navbar({ searchQuery, onSearchChange }: NavbarProps) {
+  const { cartItems, setIsCartOpen } = useCartContext();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-40 h-20 glass border-b border-[#1e1e2e] flex items-center justify-between px-6 lg:px-16 transition-all duration-300">
@@ -62,14 +59,14 @@ export default function Navbar({
 
         {/* Cart Icon Button with Active Counter Badge */}
         <button
-          onClick={onOpenCart}
+          onClick={() => setIsCartOpen(true)}
           className="relative p-3 bg-[#12121c] border border-[#1e1e2e] rounded-xl hover:border-[#a855f7] hover:shadow-neon-purple transition-all group shrink-0"
-          aria-label="View Shopping Cart"
+          aria-label="View Shopping Vault"
         >
           <ShoppingBag className="w-5 h-5 text-zinc-300 group-hover:text-[#00f3ff] transition-colors" />
-          {cartCount > 0 && (
+          {totalCartCount > 0 && (
             <span className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-[#a855f7] to-[#ff007f] text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#0a0a0f] shadow-hot-pink animate-pulse">
-              {cartCount}
+              {totalCartCount}
             </span>
           )}
         </button>

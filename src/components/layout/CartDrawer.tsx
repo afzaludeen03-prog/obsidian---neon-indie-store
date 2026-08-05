@@ -1,26 +1,16 @@
 import { motion, AnimatePresence } from "motion/react";
-import { X, Trash2, ShoppingBag, ArrowRight, Plus, Minus, CheckCircle } from "lucide-react";
-import { CartItem } from "../../types";
-import { useState } from "react";
+import { X, Trash2, ShoppingBag, ArrowRight, Plus, Minus } from "lucide-react";
+import { useCartContext } from "../../context/CartContext";
 
-interface CartDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  cartItems: CartItem[];
-  onUpdateQuantity: (gameId: string, delta: number) => void;
-  onRemoveItem: (gameId: string) => void;
-  onClearCart: () => void;
-}
-
-export default function CartDrawer({
-  isOpen,
-  onClose,
-  cartItems,
-  onUpdateQuantity,
-  onRemoveItem,
-  onClearCart,
-}: CartDrawerProps) {
-  const [isCheckedOut, setIsCheckedOut] = useState(false);
+export default function CartDrawer() {
+  const {
+    isCartOpen,
+    setIsCartOpen,
+    cartItems,
+    updateQuantity,
+    removeFromCart,
+    openCheckout,
+  } = useCartContext();
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.game.price * item.quantity,
@@ -29,26 +19,17 @@ export default function CartDrawer({
   const tax = subtotal * 0.08;
   const total = subtotal + tax;
 
-  const handleCheckout = () => {
-    setIsCheckedOut(true);
-    setTimeout(() => {
-      onClearCart();
-      setIsCheckedOut(false);
-      onClose();
-    }, 2000);
-  };
-
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isCartOpen && (
         <>
           {/* Backdrop Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 cursor-pointer"
+            onClick={() => setIsCartOpen(false)}
+            className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 cursor-pointer"
           />
 
           {/* Drawer Container */}
@@ -70,7 +51,7 @@ export default function CartDrawer({
                 </h2>
               </div>
               <button
-                onClick={onClose}
+                onClick={() => setIsCartOpen(false)}
                 className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -79,23 +60,7 @@ export default function CartDrawer({
 
             {/* Cart Items List */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {isCheckedOut ? (
-                <div className="h-full flex flex-col items-center justify-center text-center py-12">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="w-16 h-16 bg-[#00f3ff]/20 text-[#00f3ff] rounded-full flex items-center justify-center mb-4 border border-[#00f3ff]/40 shadow-neon-cyan"
-                  >
-                    <CheckCircle className="w-8 h-8" />
-                  </motion.div>
-                  <h3 className="text-2xl font-display font-black text-white italic uppercase tracking-tight mb-2">
-                    Access Granted!
-                  </h3>
-                  <p className="text-zinc-400 text-sm max-w-xs">
-                    Your games have been added to your Obsidian library. Preparing download...
-                  </p>
-                </div>
-              ) : cartItems.length === 0 ? (
+              {cartItems.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12">
                   <div className="w-16 h-16 bg-[#12121c] text-zinc-600 rounded-full flex items-center justify-center mb-4 border border-[#1e1e2e]">
                     <ShoppingBag className="w-8 h-8" />
@@ -104,10 +69,10 @@ export default function CartDrawer({
                     Your vault is empty
                   </h3>
                   <p className="text-zinc-500 text-sm max-w-xs mb-6">
-                    Browse the indie showcase and add games to your cart to get started.
+                    Browse the indie showcase and add games to your vault to get started.
                   </p>
                   <button
-                    onClick={onClose}
+                    onClick={() => setIsCartOpen(false)}
                     className="px-6 py-3 bg-[#a855f7] text-white rounded-lg font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-neon-purple"
                   >
                     Explore Games
@@ -135,11 +100,11 @@ export default function CartDrawer({
                       <p className="text-xs text-[#00f3ff] font-mono font-semibold mt-0.5">
                         ${item.game.price.toFixed(2)}
                       </p>
-                      
+
                       {/* Quantity Selector */}
                       <div className="flex items-center gap-2 mt-2">
                         <button
-                          onClick={() => onUpdateQuantity(item.game.id, -1)}
+                          onClick={() => updateQuantity(item.game.id, -1)}
                           className="w-6 h-6 rounded bg-[#1e1e2e] hover:bg-[#a855f7]/30 text-white flex items-center justify-center transition-colors"
                         >
                           <Minus className="w-3 h-3" />
@@ -148,7 +113,7 @@ export default function CartDrawer({
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => onUpdateQuantity(item.game.id, 1)}
+                          onClick={() => updateQuantity(item.game.id, 1)}
                           className="w-6 h-6 rounded bg-[#1e1e2e] hover:bg-[#a855f7]/30 text-white flex items-center justify-center transition-colors"
                         >
                           <Plus className="w-3 h-3" />
@@ -157,7 +122,7 @@ export default function CartDrawer({
                     </div>
 
                     <button
-                      onClick={() => onRemoveItem(item.game.id)}
+                      onClick={() => removeFromCart(item.game.id)}
                       className="p-2 text-zinc-500 hover:text-[#ff007f] hover:bg-[#ff007f]/10 rounded-lg transition-colors shrink-0"
                       title="Remove item"
                     >
@@ -168,8 +133,8 @@ export default function CartDrawer({
               )}
             </div>
 
-            {/* Drawer Footer & Checkout */}
-            {cartItems.length > 0 && !isCheckedOut && (
+            {/* Drawer Footer & Checkout Trigger */}
+            {cartItems.length > 0 && (
               <div className="p-6 border-t border-[#1e1e2e] bg-[#12121c]/80 space-y-4">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-zinc-400">
@@ -177,7 +142,7 @@ export default function CartDrawer({
                     <span className="font-mono text-white">${subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-zinc-400">
-                    <span>Estimated Tax (8%)</span>
+                    <span>Est. Taxes (8%)</span>
                     <span className="font-mono text-white">${tax.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-white/10">
@@ -187,10 +152,10 @@ export default function CartDrawer({
                 </div>
 
                 <button
-                  onClick={handleCheckout}
+                  onClick={openCheckout}
                   className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-neon-purple"
                 >
-                  Checkout Now
+                  Proceed to Checkout
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>

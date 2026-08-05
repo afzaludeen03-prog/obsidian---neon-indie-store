@@ -1,12 +1,10 @@
-import { useState } from "react";
 import { motion } from "motion/react";
-import { ShoppingBag, Star, Tag, Check } from "lucide-react";
+import { ShoppingBag, Star, Tag, Check, Eye } from "lucide-react";
 import { Game } from "../../types";
+import { useCartContext } from "../../context/CartContext";
 
 interface FeaturedGamesProps {
   games: Game[];
-  cartGameIds: string[];
-  onAddToCart: (game: Game) => void;
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
 }
@@ -15,24 +13,18 @@ const CATEGORIES = ["All", "Cyberpunk", "Action", "RPG", "Rhythm", "Stealth"];
 
 export default function FeaturedGames({
   games,
-  cartGameIds,
-  onAddToCart,
   selectedCategory,
   onSelectCategory,
 }: FeaturedGamesProps) {
-  const [addedGameId, setAddedGameId] = useState<string | null>(null);
+  const { cartItems, addToCart, openGameModal } = useCartContext();
 
   const filteredGames = games.filter((game) => {
     if (selectedCategory === "All") return true;
-    return game.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-      game.tags.some((tag) => tag.toLowerCase() === selectedCategory.toLowerCase());
+    return (
+      game.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+      game.tags.some((tag) => tag.toLowerCase() === selectedCategory.toLowerCase())
+    );
   });
-
-  const handleAddToCart = (game: Game) => {
-    onAddToCart(game);
-    setAddedGameId(game.id);
-    setTimeout(() => setAddedGameId(null), 1500);
-  };
 
   return (
     <section id="featured" className="py-24 px-6 lg:px-16 bg-[#0a0a0f] relative z-10">
@@ -70,13 +62,12 @@ export default function FeaturedGames({
         {/* Responsive 3-Column Grid */}
         {filteredGames.length === 0 ? (
           <div className="text-center py-20 bg-[#12121c] border border-[#1e1e2e] rounded-3xl">
-            <p className="text-zinc-400 text-base">No indie titles found matching your filter.</p>
+            <p className="text-zinc-400 text-base">No indie titles found matching your search.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredGames.map((game, index) => {
-              const isInCart = cartGameIds.includes(game.id);
-              const isJustAdded = addedGameId === game.id;
+              const isInCart = cartItems.some((item) => item.game.id === game.id);
 
               return (
                 <motion.div
@@ -84,11 +75,14 @@ export default function FeaturedGames({
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
-                  className="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between"
+                  transition={{ delay: index * 0.06 }}
+                  className="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between cursor-pointer"
                 >
                   {/* Card Header & Artwork */}
-                  <div className="relative h-56 overflow-hidden">
+                  <div
+                    onClick={() => openGameModal(game)}
+                    className="relative h-56 overflow-hidden"
+                  >
                     <img
                       src={game.image}
                       alt={game.title}
@@ -96,23 +90,30 @@ export default function FeaturedGames({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#12121c] via-transparent to-transparent" />
 
+                    {/* Quick View Hover Prompt */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
+                      <span className="px-4 py-2 bg-black/80 text-[#00f3ff] border border-[#00f3ff]/50 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-neon-cyan">
+                        <Eye className="w-4 h-4" /> View Details
+                      </span>
+                    </div>
+
                     {/* Discount Badge */}
                     {game.discount && (
-                      <span className="absolute top-4 left-4 bg-[#ff007f] text-white text-[11px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shadow-hot-pink">
+                      <span className="absolute top-4 left-4 bg-[#ff007f] text-white text-[11px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider shadow-hot-pink z-10">
                         {game.discount}
                       </span>
                     )}
 
                     {/* Rating Badge */}
-                    <div className="absolute top-4 right-4 bg-[#0a0a0f]/80 backdrop-blur-md text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1 border border-white/10">
-                      <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                    <div className="absolute top-4 right-4 bg-[#0a0a0f]/80 backdrop-blur-md text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1 border border-white/10 z-10">
+                      <Star className="w-3.5 h-3.5 fill-yellow-400" />
                       <span>{game.rating}</span>
                     </div>
                   </div>
 
                   {/* Card Content Body */}
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                    <div>
+                    <div onClick={() => openGameModal(game)}>
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1.5 mb-3">
                         {game.tags.map((tag) => (
@@ -126,7 +127,7 @@ export default function FeaturedGames({
                       </div>
 
                       {/* Title & Description */}
-                      <h3 className="text-xl font-display font-black text-white group-hover:text-[#a855f7] transition-colors uppercase italic tracking-tight mb-2">
+                      <h3 className="text-xl font-display font-black text-white group-hover:text-[#a855f7] transition-colors uppercase italic tracking-tight mb-1">
                         {game.title}
                       </h3>
                       <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
@@ -148,26 +149,23 @@ export default function FeaturedGames({
                       </div>
 
                       <button
-                        onClick={() => handleAddToCart(game)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(game);
+                        }}
                         className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
-                          isJustAdded
-                            ? "bg-green-500 text-black shadow-lg"
-                            : isInCart
-                            ? "bg-[#1e1e2e] text-[#00f3ff] border border-[#00f3ff]/40 hover:bg-[#00f3ff]/20"
+                          isInCart
+                            ? "bg-[#1e1e2e] text-[#00f3ff] border border-[#00f3ff]/40 shadow-neon-cyan"
                             : "bg-[#a855f7] text-white hover:bg-[#a855f7]/80 hover:shadow-neon-purple"
                         }`}
                       >
-                        {isJustAdded ? (
+                        {isInCart ? (
                           <>
-                            <Check className="w-4 h-4" /> Added
-                          </>
-                        ) : isInCart ? (
-                          <>
-                            <ShoppingBag className="w-4 h-4" /> In Cart
+                            <Check className="w-4 h-4" /> In Vault
                           </>
                         ) : (
                           <>
-                            <ShoppingBag className="w-4 h-4" /> Add to Cart
+                            <ShoppingBag className="w-4 h-4" /> Add to Vault
                           </>
                         )}
                       </button>

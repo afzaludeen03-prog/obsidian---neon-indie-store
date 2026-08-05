@@ -3,61 +3,17 @@ import Navbar from "./components/layout/Navbar";
 import Hero from "./components/home/Hero";
 import FeaturedGames from "./components/home/FeaturedGames";
 import CartDrawer from "./components/layout/CartDrawer";
+import GameModal from "./components/home/GameModal";
+import CheckoutModal from "./components/cart/CheckoutModal";
+import Toast from "./components/ui/Toast";
 import Footer from "./components/layout/Footer";
 import { GAMES_DATA } from "./data/games";
-import { CartItem, Game } from "./types";
-import { motion, AnimatePresence } from "motion/react";
-import { ShoppingBag } from "lucide-react";
+import { CartProvider } from "./context/CartContext";
+import { motion } from "motion/react";
 
-export default function App() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+function MainContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Cart Functions
-  const handleAddToCart = (game: Game) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.game.id === game.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.game.id === game.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { game, quantity: 1 }];
-    });
-
-    setToastMessage(`Added "${game.title}" to your vault`);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const handleUpdateQuantity = (gameId: string, delta: number) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) => {
-          if (item.game.id === gameId) {
-            const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
-          }
-          return item;
-        })
-        .filter(Boolean) as CartItem[]
-    );
-  };
-
-  const handleRemoveItem = (gameId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.game.id !== gameId));
-  };
-
-  const handleClearCart = () => {
-    setCartItems([]);
-  };
-
-  const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const cartGameIds = cartItems.map((item) => item.game.id);
 
   // Filter games based on search query
   const filteredGames = GAMES_DATA.filter((game) => {
@@ -96,12 +52,7 @@ export default function App() {
       />
 
       {/* Top Navbar */}
-      <Navbar
-        cartCount={totalCartCount}
-        onOpenCart={() => setIsCartOpen(true)}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+      <Navbar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       {/* Main Page Body */}
       <main>
@@ -125,8 +76,6 @@ export default function App() {
         {/* Featured / Trending Games Section */}
         <FeaturedGames
           games={filteredGames}
-          cartGameIds={cartGameIds}
-          onAddToCart={handleAddToCart}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
@@ -153,32 +102,19 @@ export default function App() {
       {/* Footer Component */}
       <Footer />
 
-      {/* Slide-over Cart Drawer */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-      />
-
-      {/* Interactive Toast Notification */}
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 right-6 z-50 bg-[#12121c] border border-[#00f3ff]/40 text-white px-5 py-3.5 rounded-xl shadow-neon-cyan flex items-center gap-3 text-xs font-bold"
-          >
-            <div className="p-1 bg-[#00f3ff]/20 text-[#00f3ff] rounded-md">
-              <ShoppingBag className="w-4 h-4" />
-            </div>
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Global Modals & Overlays */}
+      <CartDrawer />
+      <GameModal />
+      <CheckoutModal />
+      <Toast />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <CartProvider>
+      <MainContent />
+    </CartProvider>
   );
 }
