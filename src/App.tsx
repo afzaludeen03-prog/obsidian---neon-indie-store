@@ -8,23 +8,27 @@ import GameModal from "./components/home/GameModal";
 import CheckoutModal from "./components/cart/CheckoutModal";
 import UserLibrary from "./components/library/UserLibrary";
 import CommunityHub from "./components/community/CommunityHub";
+import DevDashboard from "./components/admin/DevDashboard";
+import NeonBackground from "./components/effects/NeonBackground";
 import Toast from "./components/ui/Toast";
 import Footer from "./components/layout/Footer";
-import { GAMES_DATA } from "./data/games";
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { LibraryProvider } from "./context/LibraryContext";
 import { CommunityProvider } from "./context/CommunityContext";
+import { StoreProvider, useStoreContext } from "./context/StoreContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { ActiveTab } from "./types";
 import { motion } from "motion/react";
 
 function MainContent() {
+  const { games } = useStoreContext();
   const [activeTab, setActiveTab] = useState<ActiveTab>("store");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Filter games based on search query across title, category, tags, and developer
-  const filteredGames = GAMES_DATA.filter((game) => {
+  const filteredGames = games.filter((game) => {
     const query = searchQuery.toLowerCase();
     return (
       game.title.toLowerCase().includes(query) ||
@@ -36,6 +40,9 @@ function MainContent() {
 
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] text-white selection:bg-[#00f3ff]/30 selection:text-[#00f3ff] overflow-x-hidden font-sans">
+      {/* Ambient Cyberpunk Canvas Particle & Grid Background */}
+      <NeonBackground />
+
       {/* Dynamic Background Noise Texture */}
       <div
         className="fixed inset-0 pointer-events-none z-50 opacity-[0.03] mix-blend-overlay"
@@ -130,6 +137,7 @@ function MainContent() {
       <WishlistDrawer />
       <GameModal />
       <CheckoutModal />
+      <DevDashboard />
       <Toast />
     </div>
   );
@@ -137,14 +145,18 @@ function MainContent() {
 
 export default function App() {
   return (
-    <CartProvider>
-      <WishlistProvider>
-        <LibraryProvider>
-          <CommunityProvider>
-            <MainContent />
-          </CommunityProvider>
-        </LibraryProvider>
-      </WishlistProvider>
-    </CartProvider>
+    <ThemeProvider>
+      <CartProvider>
+        <WishlistProvider>
+          <LibraryProvider>
+            <CommunityProvider>
+              <StoreProvider>
+                <MainContent />
+              </StoreProvider>
+            </CommunityProvider>
+          </LibraryProvider>
+        </WishlistProvider>
+      </CartProvider>
+    </ThemeProvider>
   );
 }

@@ -4,6 +4,7 @@ import { ShoppingBag, Star, Tag, Check, Eye, Heart, ArrowUpDown } from "lucide-r
 import { Game, SortOption } from "../../types";
 import { useCartContext } from "../../context/CartContext";
 import { useWishlistContext } from "../../context/WishlistContext";
+import { audioManager } from "../../utils/audio";
 
 interface FeaturedGamesProps {
   games: Game[];
@@ -73,7 +74,10 @@ export default function FeaturedGames({
               <ArrowUpDown className="w-4 h-4 text-[#00f3ff]" />
               <select
                 value={sortOption}
-                onChange={(e) => setSortOption(e.target.value as SortOption)}
+                onChange={(e) => {
+                  audioManager.playHoverTick();
+                  setSortOption(e.target.value as SortOption);
+                }}
                 className="bg-transparent text-xs text-white font-bold focus:outline-none cursor-pointer"
               >
                 <option value="featured" className="bg-[#0a0a0f]">Featured</option>
@@ -90,7 +94,11 @@ export default function FeaturedGames({
               {CATEGORIES.map((category) => (
                 <button
                   key={category}
-                  onClick={() => onSelectCategory(category)}
+                  onClick={() => {
+                    audioManager.playHoverTick();
+                    onSelectCategory(category);
+                  }}
+                  onMouseEnter={() => audioManager.playHoverTick()}
                   className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                     selectedCategory === category
                       ? "bg-[#a855f7] text-white shadow-neon-purple"
@@ -121,12 +129,16 @@ export default function FeaturedGames({
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between cursor-pointer"
+                  transition={{ delay: index * 0.04 }}
+                  onMouseEnter={() => audioManager.playHoverTick()}
+                  className="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between cursor-pointer hover:-translate-y-1.5 transition-all duration-300"
                 >
                   {/* Card Header & Artwork */}
                   <div
-                    onClick={() => openGameModal(game)}
+                    onClick={() => {
+                      audioManager.playHoverTick();
+                      openGameModal(game);
+                    }}
                     className="relative h-56 overflow-hidden"
                   >
                     <img
@@ -154,6 +166,7 @@ export default function FeaturedGames({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        audioManager.playSuccessChime();
                         toggleWishlist(game);
                       }}
                       className={`absolute bottom-4 right-4 p-2.5 rounded-full border backdrop-blur-md transition-all z-20 ${
@@ -175,7 +188,10 @@ export default function FeaturedGames({
 
                   {/* Card Content Body */}
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                    <div onClick={() => openGameModal(game)}>
+                    <div onClick={() => {
+                      audioManager.playHoverTick();
+                      openGameModal(game);
+                    }}>
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1.5 mb-3">
                         {game.tags.map((tag) => (
@@ -213,6 +229,7 @@ export default function FeaturedGames({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                          audioManager.playSuccessChime();
                           addToCart(game);
                         }}
                         className={`px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
