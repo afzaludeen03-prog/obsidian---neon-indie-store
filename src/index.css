@@ -1,45 +1,84 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   
-  --color-obsidian: #09090b;
-  --color-obsidian-light: #121214;
-  --color-neon-cyan: #22d3ee;
-  --color-neon-violet: #8b5cf6;
+  --color-obsidian: #0a0a0f;
+  --color-obsidian-card: #12121c;
+  --color-obsidian-border: #1e1e2e;
+  --color-neon-cyan: #00f3ff;
+  --color-neon-purple: #a855f7;
+  --color-hot-pink: #ff007f;
   
-  --shadow-neon-violet: 0 0 20px rgba(139, 92, 246, 0.3);
-  --shadow-neon-cyan: 0 0 20px rgba(34, 211, 238, 0.2);
+  --shadow-neon-purple: 0 0 25px rgba(168, 85, 247, 0.4);
+  --shadow-neon-cyan: 0 0 25px rgba(0, 243, 255, 0.4);
+  --shadow-hot-pink: 0 0 25px rgba(255, 0, 127, 0.4);
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    @apply bg-obsidian text-white font-sans antialiased selection:bg-neon-cyan/30 selection:text-neon-cyan;
+    background-color: #0a0a0f;
+    color: #ffffff;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
   }
 }
 
 @layer components {
   .glass {
-    @apply border border-white/10 backdrop-blur-xl bg-black/20;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(10, 10, 15, 0.75);
+  }
+  
+  .glass-card {
+    background: #12121c;
+    border: 1px solid #1e1e2e;
+    transition: all 0.3s ease;
+  }
+  
+  .glass-card:hover {
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
+  }
+
+  .glow-text-cyan {
+    color: #00f3ff;
+    text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+  }
+  
+  .glow-text-purple {
+    color: #a855f7;
+    text-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+  }
+  
+  .glow-text-pink {
+    color: #ff007f;
+    text-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
   }
 }
 
-/* Custom scrollbar */
+/* Custom smooth scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #0a0a0f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 10px;
+  background: #1e1e2e;
+  border-radius: 9999px;
+  border: 2px solid #0a0a0f;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #a855f7;
 }

@@ -1,65 +1,82 @@
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
-import { Play, Info } from "lucide-react";
+import { motion } from "motion/react";
+import { ArrowRight, Sparkles, Flame } from "lucide-react";
 
 export default function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
   return (
-    <section ref={containerRef} className="relative h-screen w-full overflow-hidden flex items-end justify-start pb-24 px-12 lg:px-24">
-      {/* Background Image Container */}
-      <motion.div 
-        style={{ y }}
-        className="absolute inset-0 z-0"
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/20 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-transparent to-transparent z-10" />
-        <img 
-          src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop" 
-          alt="Featured Game"
-          className="w-full h-[120%] object-cover scale-110"
+    <section id="home" className="relative min-h-screen w-full pt-28 pb-20 px-6 lg:px-16 flex items-center justify-center overflow-hidden bg-[#0a0a0f]">
+      {/* Background Hero Artwork */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/60 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0f] via-transparent to-transparent z-10" />
+        <img
+          src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop"
+          alt="Featured Indie Showcase"
+          className="w-full h-full object-cover opacity-40 scale-105"
         />
-      </motion.div>
+      </div>
 
-      {/* Content */}
-      <motion.div 
-        style={{ opacity }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="relative z-20 max-w-2xl"
-      >
-        <div className="flex items-center gap-2 mb-4">
-          <span className="px-3 py-1 bg-neon-violet/20 text-neon-violet border border-neon-violet/30 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full">New Release</span>
-        </div>
-        
-        <h1 className="text-6xl md:text-8xl font-display font-black leading-none mb-6 tracking-tighter uppercase italic">
-          NEON <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-violet">SYNDICATE</span>
-        </h1>
-        
-        <p className="text-lg text-zinc-400 mb-8 max-w-lg leading-relaxed">
-          Experience the hyper-visceral cyberpunk combat simulator that redefined the indie landscape. Now with Ray-Tracing.
-        </p>
+      {/* Hero Central Content */}
+      <div className="relative z-20 max-w-5xl mx-auto text-center flex flex-col items-center">
+        {/* Badge Tag */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#12121c] border border-[#a855f7]/40 text-[#a855f7] text-xs font-bold uppercase tracking-widest mb-6 shadow-neon-purple"
+        >
+          <Sparkles className="w-4 h-4 text-[#00f3ff]" />
+          <span>Premier Indie Showcase 2026</span>
+        </motion.div>
 
-        <div className="flex flex-wrap items-center gap-4">
-          <button className="flex items-center gap-2 bg-white text-black px-10 py-4 rounded-lg font-black text-sm uppercase tracking-tight hover:bg-neon-cyan transition-colors duration-300">
-            Purchase Now — $24.99
-          </button>
-          <button className="flex items-center gap-2 bg-white/5 border border-white/10 text-white px-10 py-4 rounded-lg font-bold text-sm uppercase tracking-tight hover:bg-white/10 transition-all duration-300 backdrop-blur-md">
-            + Wishlist
-          </button>
-        </div>
-      </motion.div>
+        {/* Headline with Glowing Gradient Text */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="text-5xl sm:text-7xl md:text-8xl font-display font-black leading-none mb-8 tracking-tighter uppercase italic text-white"
+        >
+          Discover the Next Generation of{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00f3ff] via-[#a855f7] to-[#ff007f] glow-text-purple">
+            Indie Gaming
+          </span>
+        </motion.h1>
 
-      {/* Bottom Glow */}
-      <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[60%] h-48 bg-neon-cyan/5 blur-[120px] rounded-full pointer-events-none" />
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-lg sm:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed"
+        >
+          A curated boutique marketplace connecting visionary independent developers with passionate players worldwide. Experience uncensored creative freedom.
+        </motion.p>
+
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="flex flex-wrap items-center justify-center gap-5"
+        >
+          <a
+            href="#featured"
+            className="px-8 py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-neon-purple flex items-center gap-3"
+          >
+            Explore Store
+            <ArrowRight className="w-4 h-4" />
+          </a>
+          <a
+            href="#categories"
+            className="px-8 py-4 bg-[#12121c] border border-[#a855f7]/50 text-white font-bold text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-[#a855f7]/10 hover:border-[#00f3ff] transition-all flex items-center gap-2"
+          >
+            <Flame className="w-4 h-4 text-[#ff007f]" />
+            View Trending
+          </a>
+        </motion.div>
+      </div>
+
+      {/* Decorative Ambient Radial Glow */}
+      <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-[#a855f7]/10 blur-[140px] rounded-full pointer-events-none" />
     </section>
   );
 }
