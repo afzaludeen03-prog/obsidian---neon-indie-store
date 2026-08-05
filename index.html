@@ -1,13 +1,63 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>Obsidian – Neon Indie Store | Boutique Showcase for Elite Indie Games</title>
+    
+    <!-- Primary SEO Meta Tags -->
+    <meta name="title" content="Obsidian – Neon Indie Store | Boutique Showcase for Elite Indie Games" />
+    <meta name="description" content="Discover the next generation of independent gaming. Obsidian is a boutique storefront featuring real-time Ray-Tracing titles, bento grid discovery, Web Audio SFX, and custom cyberpunk glow themes." />
+    <meta name="keywords" content="indie games, cyberpunk store, game storefront, ray tracing, bento grid, web audio sfx, indie game marketplace" />
+    <meta name="theme-color" content="#0a0a0f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>" />
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://afzaludeen03-prog.github.io/obsidian---neon-indie-store/" />
+    <meta property="og:title" content="Obsidian – Neon Indie Store | Boutique Showcase for Elite Indie Games" />
+    <meta property="og:description" content="A premium boutique storefront for the next generation of independent gaming excellence. Curated by creators, for players." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" />
+    <meta property="og:site_name" content="Obsidian Neon Indie Store" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://afzaludeen03-prog.github.io/obsidian---neon-indie-store/" />
+    <meta name="twitter:title" content="Obsidian – Neon Indie Store" />
+    <meta name="twitter:description" content="Experience the hyper-visceral cyberpunk boutique marketplace for indie gaming excellence." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200&auto=format&fit=crop" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "Obsidian Neon Indie Store",
+        "url": "https://afzaludeen03-prog.github.io/obsidian---neon-indie-store/",
+        "description": "Boutique digital storefront for premier independent video games.",
+        "currenciesAccepted": "USD",
+        "priceRange": "$$"
+      }
+    </script>
   </head>
-  <body>
+  <body class="bg-[#0a0a0f] text-white antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('PWA Service Worker registered:', reg.scope))
+            .catch(err => console.log('Service Worker registration failed:', err));
+        });
+      }
+    </script>
   </body>
 </html>
-
