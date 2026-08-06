@@ -63,7 +63,7 @@ export default function Hero() {
             href="#featured"
             className="px-8 py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-neon-purple flex items-center gap-3"
           >
-            Purchase Now — {formatINR(1899)}
+            Purchase Now — {formatINR(299)}
             <ArrowRight className="w-4 h-4" />
           </a>
           <a

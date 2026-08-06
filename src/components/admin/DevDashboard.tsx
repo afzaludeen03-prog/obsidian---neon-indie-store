@@ -11,7 +11,7 @@ export default function DevDashboard() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Cyberpunk");
   const [tagsInput, setTagsInput] = useState("Cyberpunk, Action, Ray-Tracing");
-  const [price, setPrice] = useState("1499");
+  const [price, setPrice] = useState("199");
   const [discount, setDiscount] = useState("-20%");
   const [developer, setDeveloper] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -74,7 +74,7 @@ export default function DevDashboard() {
 
     const gameId = title.toLowerCase().replace(/[^a-z0-9]/g, "-") + "-" + Date.now();
     const parsedTags = tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
-    const parsedPrice = parseFloat(price) || 1499;
+    const parsedPrice = parseFloat(price) || 199;
 
     const newGame: Game = {
       id: gameId,
@@ -211,7 +211,7 @@ export default function DevDashboard() {
                 </label>
                 <input
                   type="number"
-                  placeholder="1499"
+                  placeholder="199"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   required
