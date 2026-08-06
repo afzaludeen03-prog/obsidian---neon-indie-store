@@ -1,9 +1,10 @@
-import { ShoppingBag, Search, Menu, X, Heart, Rocket, Volume2, VolumeX } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, Heart, Rocket, Volume2, VolumeX, User as UserIcon, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useCartContext } from "../../context/CartContext";
 import { useWishlistContext } from "../../context/WishlistContext";
 import { useLibraryContext } from "../../context/LibraryContext";
 import { useStoreContext } from "../../context/StoreContext";
+import { useAuthContext } from "../../context/AuthContext";
 import { ActiveTab } from "../../types";
 import ThemeSwitcher from "../ui/ThemeSwitcher";
 import { audioManager } from "../../utils/audio";
@@ -23,8 +24,9 @@ export default function Navbar({
 }: NavbarProps) {
   const { cartItems, setIsCartOpen } = useCartContext();
   const { wishlist, setIsWishlistOpen } = useWishlistContext();
-  const { libraryGames } = useLibraryContext();
+  const { library } = useLibraryContext();
   const { setIsDevPortalOpen } = useStoreContext();
+  const { user, gamerTag, setIsAuthModalOpen, signOut } = useAuthContext();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(() => audioManager.getMutedStatus());
@@ -81,9 +83,9 @@ export default function Navbar({
             }`}
           >
             Library
-            {libraryGames.length > 0 && (
+            {library.length > 0 && (
               <span className="px-1.5 py-0.2 bg-[#00f3ff]/20 text-[#00f3ff] text-[10px] rounded-md font-mono border border-[#00f3ff]/40">
-                {libraryGames.length}
+                {library.length}
               </span>
             )}
           </button>
@@ -104,8 +106,8 @@ export default function Navbar({
 
       {/* Right: Search Bar & Icons */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Search Bar with glowing focus border */}
-        <div className="relative hidden sm:block w-40 md:w-56">
+        {/* Search Bar */}
+        <div className="relative hidden sm:block w-36 md:w-52">
           <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
@@ -119,7 +121,7 @@ export default function Navbar({
           />
         </div>
 
-        {/* Audio Mute SFX Toggle Button */}
+        {/* Audio Mute SFX Toggle */}
         <button
           onClick={handleToggleAudio}
           className="p-2.5 bg-[#12121c] border border-[#1e1e2e] rounded-xl text-zinc-300 hover:text-[#00f3ff] hover:border-[#00f3ff]/40 transition-all shrink-0"
@@ -142,6 +144,32 @@ export default function Navbar({
           <Rocket className="w-3.5 h-3.5" /> Dev Portal
         </button>
 
+        {/* Auth Profile / Sign In Button */}
+        {user ? (
+          <div className="flex items-center gap-2 bg-[#12121c] border border-[#1e1e2e] px-3 py-1.5 rounded-xl">
+            <span className="text-xs font-bold text-[#00f3ff] flex items-center gap-1.5">
+              <UserIcon className="w-3.5 h-3.5 text-[#a855f7]" /> {gamerTag}
+            </span>
+            <button
+              onClick={() => signOut()}
+              className="text-zinc-500 hover:text-[#ff007f] p-1 transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => {
+              audioManager.playHoverTick();
+              setIsAuthModalOpen(true);
+            }}
+            className="px-3 py-2 bg-[#00f3ff]/20 border border-[#00f3ff]/40 text-[#00f3ff] rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#00f3ff]/30 transition-all shrink-0 flex items-center gap-1.5 shadow-neon-cyan"
+          >
+            <UserIcon className="w-3.5 h-3.5" /> Sign In
+          </button>
+        )}
+
         {/* Wishlist Heart Icon Button */}
         <button
           onClick={() => {
@@ -159,7 +187,7 @@ export default function Navbar({
           )}
         </button>
 
-        {/* Cart Icon Button with Active Counter Badge */}
+        {/* Cart Icon Button */}
         <button
           onClick={() => {
             audioManager.playHoverTick();
@@ -214,7 +242,7 @@ export default function Navbar({
             }}
             className="text-left text-sm font-bold uppercase tracking-wider text-zinc-300 hover:text-[#00f3ff]"
           >
-            Library ({libraryGames.length})
+            Library ({library.length})
           </button>
           <button
             onClick={() => {
@@ -225,15 +253,27 @@ export default function Navbar({
           >
             Community
           </button>
-          <button
-            onClick={() => {
-              setIsDevPortalOpen(true);
-              setMobileMenuOpen(false);
-            }}
-            className="text-left text-sm font-bold uppercase tracking-wider text-[#a855f7]"
-          >
-            + Dev Portal
-          </button>
+          {!user ? (
+            <button
+              onClick={() => {
+                setIsAuthModalOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              className="text-left text-sm font-bold uppercase tracking-wider text-[#00f3ff]"
+            >
+              Sign In / Register
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                signOut();
+                setMobileMenuOpen(false);
+              }}
+              className="text-left text-sm font-bold uppercase tracking-wider text-[#ff007f]"
+            >
+              Sign Out ({gamerTag})
+            </button>
+          )}
         </div>
       )}
     </nav>

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Rocket } from "lucide-react";
+import { X, Rocket, Upload, CheckCircle } from "lucide-react";
 import { useStoreContext } from "../../context/StoreContext";
+import { supabase, isSupabaseConfigured } from "../../lib/supabase";
 import { Game } from "../../types";
 
 export default function DevDashboard() {
@@ -18,16 +19,63 @@ export default function DevDashboard() {
   const [os, setOs] = useState("Windows 11 (64-bit)");
   const [gpu, setGpu] = useState("NVIDIA RTX 3060");
 
+  // File Upload States
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [buildFile, setBuildFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
+
   if (!isDevPortalOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !developer || !price) return;
 
+    setUploading(true);
+    setUploadProgress("Preparing upload...");
+
+    let finalCoverUrl = imageUrl.trim() || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop";
+
+    // Upload Cover Image to Supabase Storage Bucket 'game-covers'
+    if (coverFile && isSupabaseConfigured()) {
+      try {
+        setUploadProgress("Uploading cover image to Supabase Storage (game-covers)...");
+        const fileExt = coverFile.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
+        const { error: coverErr } = await supabase.storage
+          .from("game-covers")
+          .upload(fileName, coverFile);
+
+        if (!coverErr) {
+          const { data: publicUrlData } = supabase.storage
+            .from("game-covers")
+            .getPublicUrl(fileName);
+          if (publicUrlData?.publicUrl) {
+            finalCoverUrl = publicUrlData.publicUrl;
+          }
+        }
+      } catch (e) {
+        console.error("Cover image upload failed:", e);
+      }
+    }
+
+    // Upload Build File to Supabase Storage Bucket 'game-files'
+    if (buildFile && isSupabaseConfigured()) {
+      try {
+        setUploadProgress("Uploading build file to Supabase Storage (game-files)...");
+        const fileName = `${Date.now()}-${buildFile.name}`;
+        await supabase.storage.from("game-files").upload(fileName, buildFile);
+      } catch (e) {
+        console.error("Build file upload failed:", e);
+      }
+    }
+
+    setUploadProgress("Registering game in database...");
+
     const gameId = title.toLowerCase().replace(/[^a-z0-9]/g, "-") + "-" + Date.now();
     const parsedTags = tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
-
     const parsedPrice = parseFloat(price) || 1499;
+
     const newGame: Game = {
       id: gameId,
       title,
@@ -37,7 +85,7 @@ export default function DevDashboard() {
       originalPrice: discount ? Math.round(parsedPrice * 1.25) : undefined,
       discount: discount || undefined,
       rating: 5.0,
-      image: imageUrl.trim() || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
+      image: finalCoverUrl,
       description: description || "An exciting new indie title published through the Obsidian Syndicate Portal.",
       developer,
       releaseDate: "Just Now",
@@ -58,15 +106,14 @@ export default function DevDashboard() {
           storage: "25 GB NVMe",
         },
       },
-      screenshots: [
-        imageUrl.trim() || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
-      ],
+      screenshots: [finalCoverUrl],
       reviews: [
         { id: "r1", user: "ObsidianCurator", rating: 5, comment: "Freshly submitted title on Obsidian Portal!", date: "Just Now" },
       ],
     };
 
-    addGameToStore(newGame);
+    await addGameToStore(newGame);
+    setUploading(false);
     setIsDevPortalOpen(false);
   };
 
@@ -104,7 +151,7 @@ export default function DevDashboard() {
               Publish a New <span className="text-[#a855f7] glow-text-purple">Indie Title</span>
             </h2>
             <p className="text-xs text-zinc-400">
-              Submit your game to the live Obsidian showcase. Published titles appear instantly in the store grid!
+              Upload your game files & metadata directly to Supabase Storage and launch on the live showcase.
             </p>
           </div>
 
@@ -186,22 +233,36 @@ export default function DevDashboard() {
               </div>
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1">
-                Tags (Comma Separated)
-              </label>
-              <input
-                type="text"
-                placeholder="Cyberpunk, Action, Sci-Fi, Ray-Tracing"
-                value={tagsInput}
-                onChange={(e) => setTagsInput(e.target.value)}
-                className="w-full bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#a855f7]"
-              />
+            {/* Storage File Uploads */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-3 rounded-xl bg-[#12121c] border border-[#1e1e2e]">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1 flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5 text-[#00f3ff]" /> Cover Artwork (Supabase game-covers)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCoverFile(e.target.files?.[0] || null)}
+                  className="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#1e1e2e] file:text-[#00f3ff]"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#12121c] border border-[#1e1e2e]">
+                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1 flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5 text-[#a855f7]" /> Game Build .zip (Supabase game-files)
+                </label>
+                <input
+                  type="file"
+                  accept=".zip,.rar,.7z"
+                  onChange={(e) => setBuildFile(e.target.files?.[0] || null)}
+                  className="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#1e1e2e] file:text-[#a855f7]"
+                />
+              </div>
             </div>
 
             <div>
               <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1">
-                Cover Image URL
+                Image URL (Optional Fallback)
               </label>
               <input
                 type="url"
@@ -217,7 +278,7 @@ export default function DevDashboard() {
                 Full Game Description
               </label>
               <textarea
-                placeholder="Write a compelling overview of gameplay mechanics and narrative..."
+                placeholder="Write a compelling overview of gameplay mechanics..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
@@ -225,11 +286,18 @@ export default function DevDashboard() {
               />
             </div>
 
+            {uploading && (
+              <p className="text-xs text-[#00f3ff] font-mono animate-pulse flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" /> {uploadProgress}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-neon-purple"
+              disabled={uploading}
+              className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-neon-purple disabled:opacity-50"
             >
-              <Rocket className="w-4 h-4" /> Publish to Obsidian Showcase
+              <Rocket className="w-4 h-4" /> {uploading ? "Uploading to Supabase..." : "Publish to Obsidian Showcase"}
             </button>
           </form>
         </motion.div>

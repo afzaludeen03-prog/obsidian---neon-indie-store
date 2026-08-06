@@ -9,6 +9,7 @@ import CheckoutModal from "./components/cart/CheckoutModal";
 import UserLibrary from "./components/library/UserLibrary";
 import CommunityHub from "./components/community/CommunityHub";
 import DevDashboard from "./components/admin/DevDashboard";
+import AuthModal from "./components/auth/AuthModal";
 import NeonBackground from "./components/effects/NeonBackground";
 import Toast from "./components/ui/Toast";
 import Footer from "./components/layout/Footer";
@@ -18,6 +19,7 @@ import { LibraryProvider } from "./context/LibraryContext";
 import { CommunityProvider } from "./context/CommunityContext";
 import { StoreProvider, useStoreContext } from "./context/StoreContext";
 import { ThemeProvider } from "./context/ThemeContext";
+import { AuthProvider } from "./context/AuthContext";
 import { ActiveTab } from "./types";
 import { motion } from "motion/react";
 
@@ -138,6 +140,7 @@ function MainContent() {
       <GameModal />
       <CheckoutModal />
       <DevDashboard />
+      <AuthModal />
       <Toast />
     </div>
   );
@@ -147,15 +150,17 @@ export default function App() {
   return (
     <ThemeProvider>
       <CartProvider>
-        <WishlistProvider>
-          <LibraryProvider>
-            <CommunityProvider>
-              <StoreProvider>
-                <MainContent />
-              </StoreProvider>
-            </CommunityProvider>
-          </LibraryProvider>
-        </WishlistProvider>
+        <AuthProvider>
+          <WishlistProvider>
+            <LibraryProvider>
+              <CommunityProvider>
+                <StoreProvider>
+                  <MainContent />
+                </StoreProvider>
+              </CommunityProvider>
+            </LibraryProvider>
+          </WishlistProvider>
+        </AuthProvider>
       </CartProvider>
     </ThemeProvider>
   );
