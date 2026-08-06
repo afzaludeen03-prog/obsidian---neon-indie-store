@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, CheckCircle, CreditCard, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
 import { useCartContext } from "../../context/CartContext";
 import { useLibraryContext } from "../../context/LibraryContext";
+import { formatINR } from "../../utils/formatCurrency";
+import { audioManager } from "../../utils/audio";
 
 export default function CheckoutModal() {
   const {
@@ -41,6 +43,7 @@ export default function CheckoutModal() {
   };
 
   const handleCompleteOrder = () => {
+    audioManager.playFanfare();
     const generatedId = `OBS-${Math.floor(100000 + Math.random() * 900000)}`;
     setOrderId(generatedId);
 
@@ -115,7 +118,7 @@ export default function CheckoutModal() {
                 </div>
                 <div className="flex justify-between pt-1 font-bold text-white">
                   <span>Total Charged:</span>
-                  <span className="text-[#00f3ff] font-mono text-sm">${total.toFixed(2)}</span>
+                  <span className="text-[#00f3ff] font-mono text-sm">{formatINR(total)}</span>
                 </div>
               </div>
 
@@ -157,7 +160,7 @@ export default function CheckoutModal() {
                       </div>
                     </div>
                     <div className="font-mono text-[#00f3ff] font-bold">
-                      ${(item.game.price * item.quantity).toFixed(2)}
+                      {formatINR(item.game.price * item.quantity)}
                     </div>
                   </div>
                 ))}
@@ -207,7 +210,7 @@ export default function CheckoutModal() {
                     }`}
                   >
                     <CreditCard className="w-4 h-4" />
-                    <span>Credit Card</span>
+                    <span>Credit Card / UPI</span>
                   </button>
                   <button
                     type="button"
@@ -240,21 +243,21 @@ export default function CheckoutModal() {
               <div className="p-4 rounded-2xl bg-[#12121c] border border-[#1e1e2e] space-y-2 text-xs">
                 <div className="flex justify-between text-zinc-400">
                   <span>Subtotal</span>
-                  <span className="font-mono text-white">${subtotal.toFixed(2)}</span>
+                  <span className="font-mono text-white">{formatINR(subtotal)}</span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-green-400">
                     <span>Discount ({discountPercent}%)</span>
-                    <span className="font-mono">-${discountAmount.toFixed(2)}</span>
+                    <span className="font-mono">-{formatINR(discountAmount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-zinc-400">
                   <span>Est. Taxes (8%)</span>
-                  <span className="font-mono text-white">${tax.toFixed(2)}</span>
+                  <span className="font-mono text-white">{formatINR(tax)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
                   <span className="uppercase">Final Amount</span>
-                  <span className="font-mono text-[#00f3ff] text-base">${total.toFixed(2)}</span>
+                  <span className="font-mono text-[#00f3ff] text-base">{formatINR(total)}</span>
                 </div>
               </div>
 
@@ -262,7 +265,7 @@ export default function CheckoutModal() {
                 onClick={handleCompleteOrder}
                 className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-neon-purple"
               >
-                Pay ${total.toFixed(2)} & Claim Games
+                Pay {formatINR(total)} & Claim Games
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

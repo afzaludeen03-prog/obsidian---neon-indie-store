@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { X, Trash2, ShoppingBag, ArrowRight, Plus, Minus } from "lucide-react";
 import { useCartContext } from "../../context/CartContext";
+import { formatINR } from "../../utils/formatCurrency";
 
 export default function CartDrawer() {
   const {
@@ -98,7 +99,7 @@ export default function CartDrawer() {
                         {item.game.title}
                       </h4>
                       <p className="text-xs text-[#00f3ff] font-mono font-semibold mt-0.5">
-                        ${item.game.price.toFixed(2)}
+                        {formatINR(item.game.price)}
                       </p>
 
                       {/* Quantity Selector */}
@@ -139,15 +140,15 @@ export default function CartDrawer() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-zinc-400">
                     <span>Subtotal</span>
-                    <span className="font-mono text-white">${subtotal.toFixed(2)}</span>
+                    <span className="font-mono text-white">{formatINR(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-zinc-400">
                     <span>Est. Taxes (8%)</span>
-                    <span className="font-mono text-white">${tax.toFixed(2)}</span>
+                    <span className="font-mono text-white">{formatINR(tax)}</span>
                   </div>
                   <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-white/10">
                     <span className="uppercase tracking-wider">Total</span>
-                    <span className="font-mono text-[#00f3ff] text-lg">${total.toFixed(2)}</span>
+                    <span className="font-mono text-[#00f3ff] text-lg">{formatINR(total)}</span>
                   </div>
                 </div>
 

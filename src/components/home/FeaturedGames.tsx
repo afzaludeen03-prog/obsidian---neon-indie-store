@@ -5,6 +5,7 @@ import { Game, SortOption } from "../../types";
 import { useCartContext } from "../../context/CartContext";
 import { useWishlistContext } from "../../context/WishlistContext";
 import { audioManager } from "../../utils/audio";
+import { formatINR } from "../../utils/formatCurrency";
 
 interface FeaturedGamesProps {
   games: Game[];
@@ -218,11 +219,11 @@ export default function FeaturedGames({
                       <div>
                         {game.originalPrice && (
                           <span className="text-xs text-zinc-500 line-through block font-mono">
-                            ${game.originalPrice.toFixed(2)}
+                            {formatINR(game.originalPrice)}
                           </span>
                         )}
                         <span className="text-lg font-mono font-bold text-[#00f3ff]">
-                          ${game.price.toFixed(2)}
+                          {formatINR(game.price)}
                         </span>
                       </div>
 

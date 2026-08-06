@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Rocket, Sparkles, Image, Tag, DollarSign, Cpu } from "lucide-react";
+import { X, Rocket } from "lucide-react";
 import { useStoreContext } from "../../context/StoreContext";
 import { Game } from "../../types";
 
@@ -10,7 +10,7 @@ export default function DevDashboard() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Cyberpunk");
   const [tagsInput, setTagsInput] = useState("Cyberpunk, Action, Ray-Tracing");
-  const [price, setPrice] = useState("24.99");
+  const [price, setPrice] = useState("1499");
   const [discount, setDiscount] = useState("-20%");
   const [developer, setDeveloper] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -27,13 +27,14 @@ export default function DevDashboard() {
     const gameId = title.toLowerCase().replace(/[^a-z0-9]/g, "-") + "-" + Date.now();
     const parsedTags = tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
 
+    const parsedPrice = parseFloat(price) || 1499;
     const newGame: Game = {
       id: gameId,
       title,
       category,
       tags: parsedTags.length > 0 ? parsedTags : [category],
-      price: parseFloat(price) || 19.99,
-      originalPrice: discount ? parseFloat(price) * 1.25 : undefined,
+      price: parsedPrice,
+      originalPrice: discount ? Math.round(parsedPrice * 1.25) : undefined,
       discount: discount || undefined,
       rating: 5.0,
       image: imageUrl.trim() || "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop",
@@ -159,12 +160,11 @@ export default function DevDashboard() {
 
               <div>
                 <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1">
-                  Price ($ USD)
+                  Price (₹ INR)
                 </label>
                 <input
                   type="number"
-                  step="0.01"
-                  placeholder="24.99"
+                  placeholder="1499"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                   required

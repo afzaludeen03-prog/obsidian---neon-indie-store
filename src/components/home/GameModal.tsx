@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Star, ShoppingBag, Calendar, User, Cpu, HardDrive, Check, Sparkles } from "lucide-react";
 import { useCartContext } from "../../context/CartContext";
+import { formatINR } from "../../utils/formatCurrency";
 
 export default function GameModal() {
   const { selectedGameModal, closeGameModal, addToCart, cartItems } = useCartContext();
@@ -86,11 +87,11 @@ export default function GameModal() {
                 <div>
                   {game.originalPrice && (
                     <span className="text-xs text-zinc-500 line-through block font-mono">
-                      ${game.originalPrice.toFixed(2)}
+                      {formatINR(game.originalPrice)}
                     </span>
                   )}
                   <span className="text-xl font-mono font-bold text-[#00f3ff]">
-                    ${game.price.toFixed(2)}
+                    {formatINR(game.price)}
                   </span>
                 </div>
 

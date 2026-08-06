@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { X, Trash2, ShoppingBag, Heart } from "lucide-react";
 import { useWishlistContext } from "../../context/WishlistContext";
+import { formatINR } from "../../utils/formatCurrency";
 
 export default function WishlistDrawer() {
   const { wishlist, isWishlistOpen, setIsWishlistOpen, removeFromWishlist, moveToVault } =
@@ -85,7 +86,7 @@ export default function WishlistDrawer() {
                         {game.title}
                       </h4>
                       <p className="text-xs text-[#00f3ff] font-mono font-semibold mt-0.5">
-                        ${game.price.toFixed(2)}
+                        {formatINR(game.price)}
                       </p>
 
                       <button
