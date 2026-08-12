@@ -40,7 +40,7 @@ export default function Navbar({
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 h-20 glass border-b border-[#1e1e2e] flex items-center justify-between px-6 lg:px-16 transition-all duration-300">
+    <nav className="fixed top-0 left-0 right-0 z-40 min-h-20 pt-safe glass border-b border-[#1e1e2e] flex items-center justify-between px-4 sm:px-6 lg:px-16 transition-all duration-300">
       {/* Left: Brand Logo & Nav Links */}
       <div className="flex items-center gap-10">
         <button
@@ -48,7 +48,7 @@ export default function Navbar({
             audioManager.playHoverTick();
             onSelectTab("store");
           }}
-          className="flex items-center gap-3 group focus:outline-none"
+          className="flex items-center gap-3 group focus:outline-none min-h-[44px]"
         >
           <div className="w-8 h-8 bg-gradient-to-tr from-[#a855f7] to-[#00f3ff] rounded-lg shadow-neon-purple group-hover:scale-110 transition-transform flex items-center justify-center font-black text-black text-xs">
             O
@@ -66,7 +66,7 @@ export default function Navbar({
               onSelectTab("store");
             }}
             onMouseEnter={() => audioManager.playHoverTick()}
-            className={`transition-colors ${
+            className={`min-h-[44px] transition-colors ${
               activeTab === "store" ? "text-[#00f3ff] glow-text-cyan" : "text-zinc-400 hover:text-white"
             }`}
           >
@@ -78,7 +78,7 @@ export default function Navbar({
               onSelectTab("library");
             }}
             onMouseEnter={() => audioManager.playHoverTick()}
-            className={`flex items-center gap-1.5 transition-colors ${
+            className={`min-h-[44px] flex items-center gap-1.5 transition-colors ${
               activeTab === "library" ? "text-[#00f3ff] glow-text-cyan" : "text-zinc-400 hover:text-white"
             }`}
           >
@@ -95,7 +95,7 @@ export default function Navbar({
               onSelectTab("community");
             }}
             onMouseEnter={() => audioManager.playHoverTick()}
-            className={`transition-colors ${
+            className={`min-h-[44px] transition-colors ${
               activeTab === "community" ? "text-[#a855f7] glow-text-purple" : "text-zinc-400 hover:text-white"
             }`}
           >
@@ -117,14 +117,14 @@ export default function Navbar({
               onSearchChange(e.target.value);
               if (activeTab !== "store") onSelectTab("store");
             }}
-            className="w-full bg-[#12121c] border border-[#1e1e2e] text-xs text-white placeholder-zinc-500 pl-9 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-[#00f3ff] focus:shadow-neon-cyan transition-all"
+            className="w-full bg-[#12121c] border border-[#1e1e2e] text-xs text-white placeholder-zinc-500 pl-9 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-[#00f3ff] focus:shadow-neon-cyan transition-all min-h-[44px]"
           />
         </div>
 
         {/* Audio Mute SFX Toggle */}
         <button
           onClick={handleToggleAudio}
-          className="p-2.5 bg-[#12121c] border border-[#1e1e2e] rounded-xl text-zinc-300 hover:text-[#00f3ff] hover:border-[#00f3ff]/40 transition-all shrink-0"
+          className="p-2.5 min-w-[44px] min-h-[44px] bg-[#12121c] border border-[#1e1e2e] rounded-xl text-zinc-300 hover:text-[#00f3ff] hover:border-[#00f3ff]/40 transition-all shrink-0 flex items-center justify-center"
           title={isMuted ? "Unmute UI SFX" : "Mute UI SFX"}
         >
           {isMuted ? <VolumeX className="w-4 h-4 text-[#ff007f]" /> : <Volume2 className="w-4 h-4 text-[#00f3ff]" />}
@@ -139,20 +139,20 @@ export default function Navbar({
             audioManager.playHoverTick();
             setIsDevPortalOpen(true);
           }}
-          className="hidden lg:flex items-center gap-1.5 px-3 py-2 bg-[#a855f7]/20 border border-[#a855f7]/40 text-[#a855f7] rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#a855f7]/30 transition-all shrink-0"
+          className="hidden lg:flex items-center gap-1.5 px-3 py-2 min-h-[44px] bg-[#a855f7]/20 border border-[#a855f7]/40 text-[#a855f7] rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#a855f7]/30 transition-all shrink-0"
         >
           <Rocket className="w-3.5 h-3.5" /> Dev Portal
         </button>
 
         {/* Auth Profile / Sign In Button */}
         {user ? (
-          <div className="flex items-center gap-2 bg-[#12121c] border border-[#1e1e2e] px-3 py-1.5 rounded-xl">
+          <div className="flex items-center gap-2 bg-[#12121c] border border-[#1e1e2e] px-3 py-1.5 min-h-[44px] rounded-xl">
             <span className="text-xs font-bold text-[#00f3ff] flex items-center gap-1.5">
               <UserIcon className="w-3.5 h-3.5 text-[#a855f7]" /> {gamerTag}
             </span>
             <button
               onClick={() => signOut()}
-              className="text-zinc-500 hover:text-[#ff007f] p-1 transition-colors"
+              className="text-zinc-500 hover:text-[#ff007f] p-1.5 min-w-[36px] min-h-[36px] transition-colors flex items-center justify-center"
               title="Sign Out"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -164,7 +164,7 @@ export default function Navbar({
               audioManager.playHoverTick();
               setIsAuthModalOpen(true);
             }}
-            className="px-3 py-2 bg-[#00f3ff]/20 border border-[#00f3ff]/40 text-[#00f3ff] rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#00f3ff]/30 transition-all shrink-0 flex items-center gap-1.5 shadow-neon-cyan"
+            className="px-3 py-2 min-h-[44px] bg-[#00f3ff]/20 border border-[#00f3ff]/40 text-[#00f3ff] rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-[#00f3ff]/30 transition-all shrink-0 flex items-center gap-1.5 shadow-neon-cyan"
           >
             <UserIcon className="w-3.5 h-3.5" /> Sign In
           </button>
@@ -176,7 +176,7 @@ export default function Navbar({
             audioManager.playHoverTick();
             setIsWishlistOpen(true);
           }}
-          className="relative p-2.5 bg-[#12121c] border border-[#1e1e2e] rounded-xl hover:border-[#ff007f] hover:shadow-hot-pink transition-all group shrink-0"
+          className="relative p-2.5 min-w-[44px] min-h-[44px] bg-[#12121c] border border-[#1e1e2e] rounded-xl hover:border-[#ff007f] hover:shadow-hot-pink transition-all group shrink-0 flex items-center justify-center"
           aria-label="View Wishlist"
         >
           <Heart className="w-4.5 h-4.5 text-zinc-300 group-hover:text-[#ff007f] transition-colors" />
@@ -193,7 +193,7 @@ export default function Navbar({
             audioManager.playHoverTick();
             setIsCartOpen(true);
           }}
-          className="relative p-2.5 bg-[#12121c] border border-[#1e1e2e] rounded-xl hover:border-[#a855f7] hover:shadow-neon-purple transition-all group shrink-0"
+          className="relative p-2.5 min-w-[44px] min-h-[44px] bg-[#12121c] border border-[#1e1e2e] rounded-xl hover:border-[#a855f7] hover:shadow-neon-purple transition-all group shrink-0 flex items-center justify-center"
           aria-label="View Vault Cart"
         >
           <ShoppingBag className="w-4.5 h-4.5 text-zinc-300 group-hover:text-[#00f3ff] transition-colors" />
@@ -207,7 +207,7 @@ export default function Navbar({
         {/* Mobile Menu Trigger */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2.5 bg-[#12121c] border border-[#1e1e2e] text-zinc-300 rounded-xl"
+          className="md:hidden p-2.5 min-w-[44px] min-h-[44px] bg-[#12121c] border border-[#1e1e2e] text-zinc-300 rounded-xl flex items-center justify-center"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -215,7 +215,7 @@ export default function Navbar({
 
       {/* Mobile Nav Overlay */}
       {mobileMenuOpen && (
-        <div className="absolute top-20 left-0 right-0 bg-[#0a0a0f] border-b border-[#1e1e2e] p-6 flex flex-col gap-4 md:hidden z-50">
+        <div className="absolute top-[calc(5rem+env(safe-area-inset-top,0px))] left-0 right-0 bg-[#0a0a0f] border-b border-[#1e1e2e] p-6 pb-safe flex flex-col gap-4 md:hidden z-50 shadow-2xl">
           <input
             type="text"
             placeholder="Search games..."
@@ -224,14 +224,14 @@ export default function Navbar({
               onSearchChange(e.target.value);
               if (activeTab !== "store") onSelectTab("store");
             }}
-            className="w-full bg-[#12121c] border border-[#1e1e2e] text-xs text-white p-3 rounded-xl focus:outline-none focus:border-[#00f3ff]"
+            className="w-full bg-[#12121c] border border-[#1e1e2e] text-xs text-white p-3 rounded-xl focus:outline-none focus:border-[#00f3ff] min-h-[44px]"
           />
           <button
             onClick={() => {
               onSelectTab("store");
               setMobileMenuOpen(false);
             }}
-            className="text-left text-sm font-bold uppercase tracking-wider text-zinc-300 hover:text-[#00f3ff]"
+            className="text-left text-sm font-bold uppercase tracking-wider text-zinc-300 hover:text-[#00f3ff] min-h-[44px] flex items-center"
           >
             Store
           </button>
@@ -240,7 +240,7 @@ export default function Navbar({
               onSelectTab("library");
               setMobileMenuOpen(false);
             }}
-            className="text-left text-sm font-bold uppercase tracking-wider text-zinc-300 hover:text-[#00f3ff]"
+            className="text-left text-sm font-bold uppercase tracking-wider text-zinc-300 hover:text-[#00f3ff] min-h-[44px] flex items-center"
           >
             Library ({library.length})
           </button>
@@ -249,7 +249,7 @@ export default function Navbar({
               onSelectTab("community");
               setMobileMenuOpen(false);
             }}
-            className="text-left text-sm font-bold uppercase tracking-wider text-zinc-300 hover:text-[#a855f7]"
+            className="text-left text-sm font-bold uppercase tracking-wider text-zinc-300 hover:text-[#a855f7] min-h-[44px] flex items-center"
           >
             Community
           </button>
@@ -259,7 +259,7 @@ export default function Navbar({
                 setIsAuthModalOpen(true);
                 setMobileMenuOpen(false);
               }}
-              className="text-left text-sm font-bold uppercase tracking-wider text-[#00f3ff]"
+              className="text-left text-sm font-bold uppercase tracking-wider text-[#00f3ff] min-h-[44px] flex items-center"
             >
               Sign In / Register
             </button>
@@ -269,7 +269,7 @@ export default function Navbar({
                 signOut();
                 setMobileMenuOpen(false);
               }}
-              className="text-left text-sm font-bold uppercase tracking-wider text-[#ff007f]"
+              className="text-left text-sm font-bold uppercase tracking-wider text-[#ff007f] min-h-[44px] flex items-center"
             >
               Sign Out ({gamerTag})
             </button>

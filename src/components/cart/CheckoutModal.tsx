@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, CheckCircle, CreditCard, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
 import { useCartContext } from "../../context/CartContext";
@@ -24,6 +24,18 @@ export default function CheckoutModal() {
   const [paymentMethod, setPaymentMethod] = useState<"card" | "crypto" | "vault">("card");
   const [isCompleted, setIsCompleted] = useState(false);
   const [orderId, setOrderId] = useState("");
+
+  // Lock background body scrolling when checkout modal is active
+  useEffect(() => {
+    if (isCheckoutOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isCheckoutOpen]);
 
   if (!isCheckoutOpen) return null;
 
@@ -62,7 +74,7 @@ export default function CheckoutModal() {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pt-safe pb-safe overflow-y-auto">
         {/* Backdrop Overlay */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -82,7 +94,8 @@ export default function CheckoutModal() {
           {/* Close Button */}
           <button
             onClick={closeCheckout}
-            className="absolute top-6 right-6 text-zinc-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"
+            className="absolute top-6 right-6 text-zinc-400 hover:text-white p-2.5 min-w-[44px] min-h-[44px] rounded-full hover:bg-white/5 transition-colors flex items-center justify-center"
+            aria-label="Close Checkout"
           >
             <X className="w-5 h-5" />
           </button>
@@ -124,7 +137,7 @@ export default function CheckoutModal() {
 
               <button
                 onClick={handleFinish}
-                className="w-full max-w-md py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all shadow-neon-purple mx-auto"
+                className="w-full max-w-md py-4 min-h-[44px] bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all shadow-neon-purple mx-auto flex items-center justify-center"
               >
                 Go to My Library
               </button>
@@ -177,11 +190,11 @@ export default function CheckoutModal() {
                     placeholder="Enter code"
                     value={inputCode}
                     onChange={(e) => setInputCode(e.target.value)}
-                    className="flex-1 bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-2.5 text-xs text-white uppercase focus:outline-none focus:border-[#00f3ff]"
+                    className="flex-1 bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-2.5 min-h-[44px] text-xs text-white uppercase focus:outline-none focus:border-[#00f3ff]"
                   />
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-[#1e1e2e] text-[#00f3ff] hover:bg-[#00f3ff]/20 border border-[#00f3ff]/40 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+                    className="px-5 py-2.5 min-h-[44px] bg-[#1e1e2e] text-[#00f3ff] hover:bg-[#00f3ff]/20 border border-[#00f3ff]/40 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center"
                   >
                     Apply
                   </button>
@@ -203,7 +216,7 @@ export default function CheckoutModal() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("card")}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`p-3 min-h-[44px] rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all ${
                       paymentMethod === "card"
                         ? "bg-[#a855f7]/20 border-[#a855f7] text-white shadow-neon-purple"
                         : "bg-[#12121c] border-[#1e1e2e] text-zinc-400"
@@ -215,7 +228,7 @@ export default function CheckoutModal() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("crypto")}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`p-3 min-h-[44px] rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all ${
                       paymentMethod === "crypto"
                         ? "bg-[#00f3ff]/20 border-[#00f3ff] text-white shadow-neon-cyan"
                         : "bg-[#12121c] border-[#1e1e2e] text-zinc-400"
@@ -227,7 +240,7 @@ export default function CheckoutModal() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("vault")}
-                    className={`p-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all ${
+                    className={`p-3 min-h-[44px] rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all ${
                       paymentMethod === "vault"
                         ? "bg-[#ff007f]/20 border-[#ff007f] text-white shadow-hot-pink"
                         : "bg-[#12121c] border-[#1e1e2e] text-zinc-400"
@@ -263,7 +276,7 @@ export default function CheckoutModal() {
 
               <button
                 onClick={handleCompleteOrder}
-                className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-neon-purple"
+                className="w-full py-4 min-h-[44px] bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-neon-purple"
               >
                 Pay {formatINR(total)} & Claim Games
                 <ArrowRight className="w-4 h-4" />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "motion/react";
 import { ThumbsUp, MessageSquare, Sparkles, Send, Star, ShieldCheck, PenTool } from "lucide-react";
 import { useCommunityContext } from "../../context/CommunityContext";

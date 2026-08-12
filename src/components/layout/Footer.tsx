@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Gamepad2, Twitter, Github, Globe, Youtube, Send, Check } from "lucide-react";
 
 export default function Footer() {

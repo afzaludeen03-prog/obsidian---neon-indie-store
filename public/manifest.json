@@ -2,9 +2,9 @@
   "name": "Obsidian – Neon Indie Store",
   "short_name": "Obsidian",
   "description": "The premier boutique storefront for indie game creators and passionate players featuring real-time Ray-Tracing, bento discovery, and Web Audio SFX.",
-  "start_url": "./index.html",
+  "start_url": "/obsidian-and-neon-indie-store/",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "portrait",
   "background_color": "#0a0a0f",
   "theme_color": "#0a0a0f",
   "icons": [

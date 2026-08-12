@@ -1,8 +1,8 @@
 const CACHE_NAME = "obsidian-store-v1";
 const ASSETS_TO_CACHE = [
-  "./",
-  "./index.html",
-  "./manifest.json"
+  "/obsidian-and-neon-indie-store/",
+  "/obsidian-and-neon-indie-store/index.html",
+  "/obsidian-and-neon-indie-store/manifest.json"
 ];
 
 // Install Event

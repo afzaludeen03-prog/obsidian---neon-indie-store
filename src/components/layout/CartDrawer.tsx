@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Trash2, ShoppingBag, ArrowRight, Plus, Minus } from "lucide-react";
 import { useCartContext } from "../../context/CartContext";
@@ -12,6 +13,18 @@ export default function CartDrawer() {
     removeFromCart,
     openCheckout,
   } = useCartContext();
+
+  // Lock background body scrolling when drawer is active
+  useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isCartOpen]);
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.game.price * item.quantity,
@@ -42,7 +55,7 @@ export default function CartDrawer() {
             className="fixed top-0 right-0 h-full w-full max-w-md bg-[#0a0a0f] border-l border-[#1e1e2e] shadow-2xl z-50 flex flex-col justify-between"
           >
             {/* Drawer Header */}
-            <div className="p-6 border-b border-[#1e1e2e] flex items-center justify-between bg-[#12121c]/50">
+            <div className="p-6 pt-safe border-b border-[#1e1e2e] flex items-center justify-between bg-[#12121c]/50">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-[#a855f7]/20 rounded-lg text-[#a855f7] border border-[#a855f7]/30">
                   <ShoppingBag className="w-5 h-5" />
@@ -53,7 +66,8 @@ export default function CartDrawer() {
               </div>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                className="p-2.5 min-w-[44px] min-h-[44px] text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center justify-center"
+                aria-label="Close Vault Cart"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -74,7 +88,7 @@ export default function CartDrawer() {
                   </p>
                   <button
                     onClick={() => setIsCartOpen(false)}
-                    className="px-6 py-3 bg-[#a855f7] text-white rounded-lg font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-neon-purple"
+                    className="px-6 py-3 min-h-[44px] bg-[#a855f7] text-white rounded-lg font-bold text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-neon-purple flex items-center justify-center"
                   >
                     Explore Games
                   </button>
@@ -106,28 +120,30 @@ export default function CartDrawer() {
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => updateQuantity(item.game.id, -1)}
-                          className="w-6 h-6 rounded bg-[#1e1e2e] hover:bg-[#a855f7]/30 text-white flex items-center justify-center transition-colors"
+                          className="min-w-[44px] min-h-[44px] rounded bg-[#1e1e2e] hover:bg-[#a855f7]/30 text-white flex items-center justify-center transition-colors"
+                          aria-label="Decrease quantity"
                         >
-                          <Minus className="w-3 h-3" />
+                          <Minus className="w-4 h-4" />
                         </button>
-                        <span className="text-xs font-mono font-bold text-white px-1">
+                        <span className="text-xs font-mono font-bold text-white px-2">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateQuantity(item.game.id, 1)}
-                          className="w-6 h-6 rounded bg-[#1e1e2e] hover:bg-[#a855f7]/30 text-white flex items-center justify-center transition-colors"
+                          className="min-w-[44px] min-h-[44px] rounded bg-[#1e1e2e] hover:bg-[#a855f7]/30 text-white flex items-center justify-center transition-colors"
+                          aria-label="Increase quantity"
                         >
-                          <Plus className="w-3 h-3" />
+                          <Plus className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
 
                     <button
                       onClick={() => removeFromCart(item.game.id)}
-                      className="p-2 text-zinc-500 hover:text-[#ff007f] hover:bg-[#ff007f]/10 rounded-lg transition-colors shrink-0"
+                      className="p-2.5 min-w-[44px] min-h-[44px] text-zinc-500 hover:text-[#ff007f] hover:bg-[#ff007f]/10 rounded-lg transition-colors shrink-0 flex items-center justify-center"
                       title="Remove item"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4.5 h-4.5" />
                     </button>
                   </motion.div>
                 ))
@@ -136,7 +152,7 @@ export default function CartDrawer() {
 
             {/* Drawer Footer & Checkout Trigger */}
             {cartItems.length > 0 && (
-              <div className="p-6 border-t border-[#1e1e2e] bg-[#12121c]/80 space-y-4">
+              <div className="p-6 pb-safe border-t border-[#1e1e2e] bg-[#12121c]/80 space-y-4">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-zinc-400">
                     <span>Subtotal</span>
@@ -154,7 +170,7 @@ export default function CartDrawer() {
 
                 <button
                   onClick={openCheckout}
-                  className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-neon-purple"
+                  className="w-full py-4 min-h-[44px] bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-neon-purple"
                 >
                   Proceed to Checkout
                   <ArrowRight className="w-4 h-4" />

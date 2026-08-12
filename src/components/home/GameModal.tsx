@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Star, ShoppingBag, Calendar, User, Cpu, HardDrive, Check, Sparkles } from "lucide-react";
 import { useCartContext } from "../../context/CartContext";
@@ -8,6 +8,18 @@ export default function GameModal() {
   const { selectedGameModal, closeGameModal, addToCart, cartItems } = useCartContext();
   const [activeTab, setActiveTab] = useState<"overview" | "specs" | "reviews">("overview");
 
+  // Lock background body scrolling when game detail modal is active
+  useEffect(() => {
+    if (selectedGameModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedGameModal]);
+
   if (!selectedGameModal) return null;
 
   const game = selectedGameModal;
@@ -15,7 +27,7 @@ export default function GameModal() {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pt-safe pb-safe overflow-y-auto">
         {/* Backdrop Overlay */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -36,7 +48,8 @@ export default function GameModal() {
           {/* Close Button */}
           <button
             onClick={closeGameModal}
-            className="absolute top-5 right-5 z-30 p-2.5 bg-black/60 backdrop-blur-md text-zinc-400 hover:text-white rounded-full border border-white/10 hover:border-white/30 transition-all"
+            className="absolute top-5 right-5 z-30 w-11 h-11 min-w-[44px] min-h-[44px] bg-black/60 backdrop-blur-md text-zinc-400 hover:text-white rounded-full border border-white/10 hover:border-white/30 transition-all flex items-center justify-center"
+            aria-label="Close Game Details"
           >
             <X className="w-5 h-5" />
           </button>
@@ -97,7 +110,7 @@ export default function GameModal() {
 
                 <button
                   onClick={() => addToCart(game)}
-                  className={`px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
+                  className={`px-6 py-3.5 min-h-[44px] rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                     isInCart
                       ? "bg-[#1e1e2e] text-[#00f3ff] border border-[#00f3ff]/50 shadow-neon-cyan"
                       : "bg-[#a855f7] text-white hover:bg-[#a855f7]/90 shadow-neon-purple active:scale-95"
@@ -118,10 +131,10 @@ export default function GameModal() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex border-b border-[#1e1e2e] px-6 bg-[#12121c]/50">
+          <div className="flex border-b border-[#1e1e2e] px-6 bg-[#12121c]/50 overflow-x-auto">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`py-4 px-6 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors ${
+              className={`py-4 px-6 min-h-[44px] text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center shrink-0 ${
                 activeTab === "overview"
                   ? "border-[#00f3ff] text-[#00f3ff]"
                   : "border-transparent text-zinc-400 hover:text-white"
@@ -131,7 +144,7 @@ export default function GameModal() {
             </button>
             <button
               onClick={() => setActiveTab("specs")}
-              className={`py-4 px-6 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors ${
+              className={`py-4 px-6 min-h-[44px] text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center shrink-0 ${
                 activeTab === "specs"
                   ? "border-[#00f3ff] text-[#00f3ff]"
                   : "border-transparent text-zinc-400 hover:text-white"
@@ -141,7 +154,7 @@ export default function GameModal() {
             </button>
             <button
               onClick={() => setActiveTab("reviews")}
-              className={`py-4 px-6 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors ${
+              className={`py-4 px-6 min-h-[44px] text-xs font-bold uppercase tracking-widest border-b-2 transition-colors flex items-center shrink-0 ${
                 activeTab === "reviews"
                   ? "border-[#00f3ff] text-[#00f3ff]"
                   : "border-transparent text-zinc-400 hover:text-white"

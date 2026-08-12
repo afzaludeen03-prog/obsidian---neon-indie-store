@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Rocket, Upload, CheckCircle } from "lucide-react";
 import { useStoreContext } from "../../context/StoreContext";
@@ -24,6 +24,18 @@ export default function DevDashboard() {
   const [buildFile, setBuildFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState("");
+
+  // Lock background body scrolling when dev portal modal is active
+  useEffect(() => {
+    if (isDevPortalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isDevPortalOpen]);
 
   if (!isDevPortalOpen) return null;
 
@@ -119,7 +131,7 @@ export default function DevDashboard() {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pt-safe pb-safe overflow-y-auto">
         {/* Backdrop Overlay */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -138,7 +150,8 @@ export default function DevDashboard() {
         >
           <button
             onClick={() => setIsDevPortalOpen(false)}
-            className="absolute top-6 right-6 text-zinc-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"
+            className="absolute top-6 right-6 text-zinc-400 hover:text-white p-2.5 min-w-[44px] min-h-[44px] rounded-full hover:bg-white/5 transition-colors flex items-center justify-center"
+            aria-label="Close Dev Portal"
           >
             <X className="w-5 h-5" />
           </button>

@@ -8,8 +8,8 @@
 
 ## 🌐 Live Application & Demo
 
-* **Live Hosted Web Application**: [afzaludeen03-prog.github.io/obsidian---neon-indie-store](https://afzaludeen03-prog.github.io/obsidian---neon-indie-store/)
-* **GitHub Repository**: [github.com/afzaludeen03-prog/obsidian---neon-indie-store](https://github.com/afzaludeen03-prog/obsidian---neon-indie-store)
+* **Live Hosted Web Application**: [afzaludeen03-prog.github.io/obsidian-and-neon-indie-store](https://afzaludeen03-prog.github.io/obsidian-and-neon-indie-store/)
+* **GitHub Repository**: [github.com/afzaludeen03-prog/obsidian-and-neon-indie-store](https://github.com/afzaludeen03-prog/obsidian-and-neon-indie-store)
 
 ---
 
@@ -76,8 +76,8 @@ play store/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/afzaludeen03-prog/obsidian---neon-indie-store.git
-   cd obsidian---neon-indie-store
+   git clone https://github.com/afzaludeen03-prog/obsidian-and-neon-indie-store.git
+   cd obsidian-and-neon-indie-store
    ```
 
 2. **Install dependencies**:

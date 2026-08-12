@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ShieldCheck, User, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
 import { useAuthContext } from "../../context/AuthContext";
@@ -19,6 +19,18 @@ export default function AuthModal() {
   const [tagInput, setTagInput] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Lock background body scrolling when auth modal is active
+  useEffect(() => {
+    if (isAuthModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isAuthModalOpen]);
 
   if (!isAuthModalOpen) return null;
 
@@ -43,7 +55,7 @@ export default function AuthModal() {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 pt-safe pb-safe overflow-y-auto">
         {/* Backdrop Overlay */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -63,7 +75,8 @@ export default function AuthModal() {
           {/* Close Button */}
           <button
             onClick={() => setIsAuthModalOpen(false)}
-            className="absolute top-6 right-6 text-zinc-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"
+            className="absolute top-6 right-6 text-zinc-400 hover:text-white p-2.5 min-w-[44px] min-h-[44px] rounded-full hover:bg-white/5 transition-colors flex items-center justify-center"
+            aria-label="Close Auth Modal"
           >
             <X className="w-5 h-5" />
           </button>
@@ -91,7 +104,7 @@ export default function AuthModal() {
                 setAuthMode("login");
                 setErrorMsg(null);
               }}
-              className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+              className={`flex-1 py-3 min-h-[44px] text-xs font-bold uppercase tracking-wider rounded-lg transition-all flex items-center justify-center ${
                 authMode === "login"
                   ? "bg-[#a855f7] text-white shadow-neon-purple"
                   : "text-zinc-400 hover:text-white"
@@ -105,7 +118,7 @@ export default function AuthModal() {
                 setAuthMode("signup");
                 setErrorMsg(null);
               }}
-              className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all ${
+              className={`flex-1 py-3 min-h-[44px] text-xs font-bold uppercase tracking-wider rounded-lg transition-all flex items-center justify-center ${
                 authMode === "signup"
                   ? "bg-[#00f3ff] text-black font-black shadow-neon-cyan"
                   : "text-zinc-400 hover:text-white"
@@ -128,7 +141,7 @@ export default function AuthModal() {
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
                   required
-                  className="w-full bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#00f3ff]"
+                  className="w-full bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-3 min-h-[44px] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#00f3ff]"
                 />
               </div>
             )}
@@ -143,7 +156,7 @@ export default function AuthModal() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#00f3ff]"
+                className="w-full bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-3 min-h-[44px] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#00f3ff]"
               />
             </div>
 
@@ -158,7 +171,7 @@ export default function AuthModal() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#a855f7]"
+                className="w-full bg-[#12121c] border border-[#1e1e2e] rounded-xl px-4 py-3 min-h-[44px] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#a855f7]"
               />
             </div>
 
@@ -171,7 +184,7 @@ export default function AuthModal() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-neon-purple disabled:opacity-50"
+              className="w-full py-4 min-h-[44px] bg-gradient-to-r from-[#a855f7] to-[#00f3ff] text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-neon-purple disabled:opacity-50"
             >
               {submitting
                 ? "Authenticating..."
